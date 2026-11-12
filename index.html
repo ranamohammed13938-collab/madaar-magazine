@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مجلة مدار الإلكترونية - الرئيسية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fcfbf9;
+            --card-bg: #ffffff;
+            --text-primary: #2c3e50;
+            --text-secondary: #555555;
+            --border-color: #e6e2db;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --purple-accent: #7b2cbf;
+            --yellow-accent: #ffb703;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-primary); line-height: 1.8; }
+
+        .main-header { background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 12px 25px; position: sticky; top: 0; z-index: 100; }
+        .header-container { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; }
+        
+        .site-logo { font-size: 1.9rem; font-weight: 900; background: linear-gradient(135deg, var(--purple-accent), var(--yellow-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+        .site-logo span { width: 9px; height: 9px; background-color: var(--yellow-accent); border-radius: 50%; display: inline-block; }
+
+        .menu-trigger { cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
+        .menu-trigger span { display: block; width: 24px; height: 2px; background-color: var(--text-primary); transition: 0.3s; }
+        .user-icon { cursor: pointer; color: var(--text-primary); display: flex; align-items: center; }
+
+        .breaking-ticker { background: transparent; border-bottom: 1px solid var(--border-color); padding: 8px 0; overflow: hidden; white-space: nowrap; max-width: 1000px; margin: 0 auto; }
+        .ticker-content { display: inline-block; animation: marquee 28s linear infinite; font-size: 0.95rem; color: var(--text-secondary); font-weight: 500; }
+        .ticker-content span { color: var(--purple-accent); font-weight: 700; margin-left: 20px; margin-right: 10px; }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* القائمة الجانبية وتعديل الـ z-index والـ Display عشان تفتح غصب عن أي عائق */
+        .side-drawer { position: fixed; top: 0; right: -300px; width: 280px; height: 100%; background-color: var(--card-bg); box-shadow: -5px 0 25px rgba(0,0,0,0.15); z-index: 9999; transition: 0.35s ease-in-out; padding: 25px; }
+        .side-drawer.open { right: 0; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; }
+        .close-drawer { background: none; border: none; font-size: 2rem; cursor: pointer; color: var(--text-secondary); }
+        .drawer-links { list-style: none; }
+        .drawer-links li { margin-bottom: 20px; }
+        .drawer-links a { text-decoration: none; color: var(--text-primary); font-size: 1.1rem; font-weight: 500; display: block; }
+        .drawer-links a:hover { color: var(--purple-accent); }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 8888; display: none; }
+        .overlay.active { display: block; }
+
+        .container { max-width: 850px; margin: 30px auto; padding: 0 20px; }
+        .page-title { font-size: 1.8rem; margin-bottom: 25px; border-bottom: 3px solid var(--yellow-accent); padding-bottom: 8px; display: inline-block; }
+        .article-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); margin-bottom: 30px; }
+        .meta-info { font-size: 0.85rem; color: #777; margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap; border-bottom: 1px dashed var(--border-color); padding-bottom: 10px; }
+        .author { color: var(--purple-accent); font-weight: 700; }
+        .article-body p { margin-bottom: 15px; color: var(--text-secondary); font-size: 1.05rem; text-align: justify; }
+        .media-container { margin-top: 20px; border-radius: 8px; overflow: hidden; }
+        .media-container img { width: 100%; height: auto; display: block; max-height: 420px; object-fit: cover; border-radius: 8px; }
+
+        /* النوافذ المنبثقة */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 99999; opacity: 0; visibility: hidden; transition: 0.3s; }
+        .modal.active { opacity: 1; visibility: visible; }
+        .modal-content { background: var(--card-bg); width: 90%; max-width: 500px; padding: 35px; border-radius: var(--radius); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 15px; left: 20px; font-size: 1.8rem; cursor: pointer; color: var(--text-secondary); }
+        .modal-content h3 { margin-bottom: 20px; font-size: 1.4rem; color: var(--purple-accent); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-size: 0.95rem; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background-color: var(--bg-color); }
+        .btn-submit { background: linear-gradient(135deg, var(--purple-accent), #9d4edd); color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; }
+
+        footer { text-align: center; padding: 30px; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.9rem; background-color: var(--card-bg); margin-top: 60px; }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <div class="menu-trigger" id="menuBtn">
+                <span></span><span></span><span></span>
+            </div>
+            <a href="index.html" class="site-logo">مَــدَار <span></span></a>
+            <div class="user-icon" id="loginBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+        </div>
+    </header>
+
+    <div class="breaking-ticker">
+        <div class="ticker-content">
+            <span>أخبار اليوم:</span> معرض الفن الرقمي بقسم الإعلام كلية التربية النوعية جامعة سوهاج &nbsp;&bull;&nbsp; 
+            <span>تحديثات:</span> مشاريع طلابية متميزة في التوثيق الصحفي والمونتاج &nbsp;&bull;&nbsp; 
+            <span>مجلة مدار:</span> إبداعات صحفية بأيدٍ جامعية شبابية.
+        </div>
+    </div>
+
+    <!-- القائمة الجانبية -->
+    <nav class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <h3>قائمة المجلة</h3>
+            <button class="close-drawer" id="closeDrawer">&times;</button>
+        </div>
+        <ul class="drawer-links">
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="about.html">عن المجلة</a></li>
+            <li><a href="articles.html">المقالات</a></li>
+            <li><a href="art.html">عن الفن</a></li>
+            <li><a href="help.html">المساعدة</a></li>
+            <li><a href="#" id="openPublishModal">طلب لنشر خبر</a></li>
+        </ul>
+    </nav>
+    <div class="overlay" id="overlay"></div>
+
+    <main class="container">
+        <h2 class="page-title">الصفحة الرئيسية</h2>
+        
+        <article class="article-card">
+            <h3>هل تحكم التكنولوجيا العالم؟</h3>
+            <div class="meta-info">
+                <span class="author">بقلم: روان عزالدين</span>
+                <span>تاريخ النشر: 11 نوفمبر 2026</span>
+                <span>آخر تعديل: منذ ساعتين</span>
+            </div>
+            <div class="article-body">
+                <p>لم تعد التكنولوجيا مجرد أدوات نستخدمها لتسهيل معيشبتنا، بل تحولت إلى بيئة موازية ننتفس من خلالها...</p>
+            </div>
+            <div class="media-container">
+                <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80" alt="التكنولوجيا">
+            </div>
+        </article>
+    </main>
+
+    <!-- نافذة طلب النشر -->
+    <div class="modal" id="publishModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closePublishModal">&times;</span>
+            <h3>طلب لنشر خبر / مقال</h3>
+            <form id="publishForm">
+                <div class="form-group"><label>اسم الكاتب / الطالب</label><input type="text" required placeholder="أدخل اسمك الكامل"></div>
+                <div class="form-group"><label>البريد الجامعي</label><input type="email" required placeholder="name@sohag-univ.edu.eg"></div>
+                <div class="form-group"><label>عنوان الخبر</label><input type="text" required placeholder="عنوان جذاب"></div>
+                <div class="form-group"><label>محتوى الموضوع</label><textarea rows="4" required placeholder="اكتب التفاصيل..."></textarea></div>
+                <button type="submit" class="btn-submit">إرسال الطلب</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeLoginModal">&times;</span>
+            <h3>تسجيل الدخول</h3>
+            <form id="loginForm">
+                <div class="form-group"><label>اسم المستخدم</label><input type="text" required placeholder="اسم المستخدم"></div>
+                <div class="form-group"><label>كلمة المرور</label><input type="password" required placeholder="••••••••"></div>
+                <button type="submit" class="btn-submit">دخول</button>
+            </form>
+        </div>
+    </div>
+
+    <footer><p>جميع الحقوق محفوظة © 2026 - مجلة مدار الإلكترونية (جامعة سوهاج - كلية التربية النوعية - قسم الإعلام)</p></footer>
+
+    <!-- الكود التفاعلي المباشر (مضمن لضمان عدم حدوث أي خطأ في ربط الملفات) -->
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sideDrawer = document.getElementById('sideDrawer');
+        const overlay = document.getElementById('overlay');
+        const closeDrawer = document.getElementById('closeDrawer');
+
+        function toggleDrawer() {
+            sideDrawer.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
+        if(menuBtn) menuBtn.addEventListener('click', toggleDrawer);
+        if(closeDrawer) closeDrawer.addEventListener('click', toggleDrawer);
+        if(overlay) overlay.addEventListener('click', toggleDrawer);
+
+        // تسجيل الدخول
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+
+        if(loginBtn) loginBtn.addEventListener('click', () => loginModal.classList.add('active'));
+        if(closeLoginModal) closeLoginModal.addEventListener('click', () => loginModal.classList.remove('active'));
+
+        // طلب النشر
+        const openPublishModal = document.getElementById('openPublishModal');
+        const publishModal = document.getElementById('publishModal');
+        const closePublishModal = document.getElementById('closePublishModal');
+
+        if(openPublishModal) {
+            openPublishModal.addEventListener('click', (e) => {
+                e.preventDefault();
+                sideDrawer.classList.remove('open');
+                overlay.classList.remove('active');
+                publishModal.classList.add('active');
+            });
+        }
+        if(closePublishModal) closePublishModal.addEventListener('click', () => publishModal.classList.remove('active'));
+
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) loginModal.classList.remove('active');
+            if (e.target === publishModal) publishModal.classList.remove('active');
+        });
+
+        document.getElementById('publishForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('تم إرسال طلب النشر بنجاح!');
+            publishModal.classList.remove('active');
+            e.target.reset();
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('تم تسجيل الدخول بنجاح!');
+            loginModal.classList.remove('active');
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>
